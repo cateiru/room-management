@@ -1,0 +1,9 @@
+version: "3"
+services:
+    management:
+        container_name: room
+        build: .
+        restart: always
+        volumes:
+            - ./user.json:/user.json
+        command: python3 src/main
