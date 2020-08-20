@@ -24,12 +24,13 @@ def read_today(database: str) -> List[Dict[str, Union[str, bool]]]:
 
     jst = timezone(timedelta(hours=+9), 'JST')
     now = datetime.now(jst)
+    yestaday = now - timedelta(days=1)
 
-    for row in table.execute(f'SELECT * from datas WHERE day={str(now.strftime(r"%Y%m%d"))}'):
+    for row in table.execute(f'SELECT * from datas WHERE day={str(yestaday.strftime(r"%Y%m%d"))}'):
         data.append({
             'date': row[0],
             'temp': row[2],
-            'hu': row[3],
+            'hum': row[3],
             'light': row[4],
             'people': bool(row[5])
         })
@@ -57,7 +58,7 @@ def read_all(database: str) -> List[Dict[str, Union[str, bool]]]:
         data.append({
             'date': row[0],
             'temp': row[2],
-            'hu': row[3],
+            'hum': row[3],
             'light': row[4],
             'people': bool(row[5])
         })
@@ -67,14 +68,14 @@ def read_all(database: str) -> List[Dict[str, Union[str, bool]]]:
     return data
 
 
-def write(database: str, temp: int, hu: int, light: int, people: bool) -> None:
+def write(database: str, temp: int, hum: int, light: int, people: bool) -> None:
     '''
     write element in database.
 
     Args:
         database (str): database file path.
         temp (int): Temperature
-        hu (int): Humidity
+        hum (int): Humidity
         light (int): Illuminance sensor.
         people (bool): Human Sensor.
     '''
@@ -84,7 +85,7 @@ def write(database: str, temp: int, hu: int, light: int, people: bool) -> None:
     jst = timezone(timedelta(hours=+9), 'JST')
     now = datetime.now(jst)
 
-    data = (str(now.strftime(r'%Y%m%d%H%M%S')), str(now.strftime(r'%Y%m%d')), temp, hu, light, str(people),)
+    data = (str(now.strftime(r'%Y%m%d%H%M%S')), str(now.strftime(r'%Y%m%d')), temp, hum, light, str(people),)
 
     table.execute('INSERT INTO datas VALUES(?, ?, ?, ?, ?, ?)', data)
 

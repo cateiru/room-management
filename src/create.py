@@ -1,3 +1,8 @@
+'''
+genarate graph
+
+Copyright (C) 2020 Yuto Watanabe
+'''
 import datetime
 import os
 
@@ -22,42 +27,43 @@ def graph(data_file_path: str) -> str:
     today_data = read_today(data_file_path)
 
     temps = []
-    hu = []
+    hums = []
 
     jst = datetime.timezone(datetime.timedelta(hours=+9), 'JST')
     now = datetime.datetime.now(jst)
+    yestaday = now - datetime.timedelta(days=1)
 
     directory = 'graph_image'
     # if directory not found it create directory.
     if not os.path.isdir(directory):
         os.makedirs(directory)
-    image_file_path = os.path.join(directory, f'{now.strftime(r"%Y%m%d")}.png')
+    image_file_path = os.path.join(directory, 'graph.png')
 
     # Sort by date.
     sorted_data = sorted(today_data, key=lambda x: x['date'])
 
     for element in sorted_data:
         temps.append(element['temp'])
-        hu.append(element['hu'])
+        hums.append(element['hum'])
 
     # graph plot
-    fig = plt.figure(figsize=[6.4, 4.8])
+    fig = plt.figure(figsize=[7, 4.8])
     ax1 = fig.add_subplot(111)
     ax2 = ax1.twinx()
 
     # line color
     ax1.plot(temps, color='blue')
-    ax2.plot(hu, color='orange')
+    ax2.plot(hums, color='orange')
 
-    # lavel of y
-    ax1.set_ylabel('Temperature ($^\circ$C)')
+    # label of y
+    ax1.set_ylabel('Temperature ($^\\circ$C)')
     ax2.set_ylabel('Humidity (%)')
 
     ax1.grid(True)
     ax1.set_xlabel('date')
     ax1.tick_params(labelbottom=False, bottom=False)
     ax2.tick_params(labelbottom=False, bottom=False)
-    plt.title(f'Graph of changes in room temperature and humidity on {now.strftime(r"%m/%d")}')
+    plt.title(f'Graph of changes in room temperature and humidity on {yestaday.strftime(r"%m/%d")}')
 
     plt.savefig(image_file_path)
 
