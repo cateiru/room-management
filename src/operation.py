@@ -41,9 +41,6 @@ def surveillance(people: bool, light: int, status: int) -> int:
             if light < light_level:
                 # light on
                 light_status = 1
-            else:
-                # light off
-                light_status = 2
     else:
         if elapsed_time(file_path):
             # light off
@@ -97,7 +94,8 @@ def is_midnight() -> bool:
     Returns:
         bool: PM7:00 to AM10:00 -> False, and True otherwise.
     '''
-    now = datetime.datetime.now()
+    jst = datetime.timezone(datetime.timedelta(hours=+9), 'JST')
+    now = datetime.datetime.now(jst)
 
     if 10 < now.hour < 19:
         return True

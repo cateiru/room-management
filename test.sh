@@ -1,4 +1,4 @@
-# pytest test/
+pytest test/
 
 echo "running pylint..."
 

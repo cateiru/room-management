@@ -3,7 +3,6 @@ main
 
 Copyright (C) 2020 Yuto Watanabe
 '''
-import multiprocessing
 import os
 import time
 
@@ -38,22 +37,10 @@ def main():
     if not os.path.isfile(database):
         create_table(database)
 
-    get_process = multiprocessing.Process(target=run, args=(
-        token,
-        database,
-        light_id_on,
-        light_id_off
-    ))
-    image_send_process = multiprocessing.Process(target=run_one_day, args=(
-        line_token,
-        database
-    ))
-
-    get_process.start()
-    image_send_process.start()
+    run(token, database, light_id_on, light_id_off, line_token)
 
 
-def run(token: str, database_file_path: str, light_id_on: str, light_id_off: str):
+def run(token: str, database_file_path: str, light_id_on: str, light_id_off: str, line_token: str):
     '''
     Operate Nature Remo by looping every minute.
 
@@ -62,6 +49,12 @@ def run(token: str, database_file_path: str, light_id_on: str, light_id_off: str
     light_id_on(str): light on ID.
     light_id_off(str): light off ID.
     '''
+    schedule.every().day.at("01:00").do(
+        create_graph,
+        line_token=line_token,
+        database_file_path=database_file_path
+    )
+
     light_status = 0
     while True:  # pylint: disable=C0325
         get_data = get_environment(token)
@@ -74,6 +67,7 @@ def run(token: str, database_file_path: str, light_id_on: str, light_id_off: str
             write(database_file_path, temp, hum, light, people)
 
             status = surveillance(people, light, light_status)
+            print(f'temp: {temp}, hum: {hum}, light: {light}, people: {people}, status: {status}')
             if status in (1, 2):
                 light_status = status
                 if status == 1:
@@ -84,22 +78,8 @@ def run(token: str, database_file_path: str, light_id_on: str, light_id_off: str
                     light_id = light_id_off
                 post_light_operation(token, light_id)
 
-        time.sleep(60)
-
-
-def run_one_day(line_token: str, database_file_path: str):
-    '''
-    Run at 1:00 am every day.
-
-    Args:
-        line_token (str): line access token.
-        database_file_path (str): path of database.
-    '''
-    schedule.every().day.at("01:00").do(
-        create_graph,
-        line_token=line_token,
-        database_file_path=database_file_path
-    )
+        schedule.run_pending()
+        time.sleep(30)
 
 
 def create_graph(line_token: str, database_file_path: str):

@@ -6,3 +6,5 @@ COPY Pipfile.lock /Pipfile.lock
 
 RUN pip install pipenv
 RUN pipenv install --system --deploy
+
+CMD python3 src/main.py
