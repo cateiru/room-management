@@ -288,3 +288,4 @@ $RECYCLE.BIN/
 
 latest_people.json
 **/*.db
+**/graph_image/*.png
