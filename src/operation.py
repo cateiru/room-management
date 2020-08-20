@@ -95,7 +95,7 @@ def is_midnight() -> bool:
     PM7:00 to AM10:00 is set as midnight, and False is executed if it is executed at that time, and True otherwise.
 
     Returns:
-        bool: [description]
+        bool: PM7:00 to AM10:00 -> False, and True otherwise.
     '''
     now = datetime.datetime.now()
 
