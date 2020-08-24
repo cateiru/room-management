@@ -9,17 +9,17 @@ import time
 import schedule
 
 try:
-    from operation import surveillance
+    # from operation import surveillance
     from database import write, create_table
     from create import graph
     from json_operation import json_read
-    from response import get_environment, post_light_operation, post_line
+    from response import get_environment, post_line
 except ImportError:
-    from .operation import surveillance
+    # from .operation import surveillance
     from .database import write, create_table
     from .create import graph
     from .json_operation import json_read
-    from .response import get_environment, post_light_operation, post_line
+    from .response import get_environment, post_line
 
 
 def main():
@@ -55,7 +55,7 @@ def run(token: str, database_file_path: str, light_id_on: str, light_id_off: str
         database_file_path=database_file_path
     )
 
-    light_status = 0
+    # light_status = 0
     while True:  # pylint: disable=C0325
         get_data = get_environment(token)
         if get_data is not None:
@@ -66,17 +66,17 @@ def run(token: str, database_file_path: str, light_id_on: str, light_id_off: str
 
             write(database_file_path, temp, hum, light, people)
 
-            status = surveillance(people, light, light_status)
-            print(f'temp: {temp}, hum: {hum}, light: {light}, people: {people}, status: {status}')
-            if status in (1, 2):
-                light_status = status
-                if status == 1:
-                    # on
-                    light_id = light_id_on
-                else:
-                    # off
-                    light_id = light_id_off
-                post_light_operation(token, light_id)
+            # status = surveillance(people, light, light_status)
+            # print(f'temp: {temp}, hum: {hum}, light: {light}, people: {people}, status: {status}')
+            # if status in (1, 2):
+            #     light_status = status
+            #     if status == 1:
+            #         # on
+            #         light_id = light_id_on
+            #     else:
+            #         # off
+            #         light_id = light_id_off
+            #     post_light_operation(token, light_id)
 
         schedule.run_pending()
         time.sleep(30)
